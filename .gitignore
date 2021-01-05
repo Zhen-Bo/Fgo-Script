@@ -1,0 +1,9 @@
+test.py
+screencap.png
+/__pycache__/
+/config/__pycache__/
+/core/__pycache__/
+UserData/config/*.ini
+screencap-rect.png
+tmp
+.vscode/
