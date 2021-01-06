@@ -6,11 +6,11 @@ from configparser import ConfigParser
 
 
 class auto():
-    def __init__(self, ckp: str, spt: str, apl: (int, str) = (0, ""), timer=12000, run_time=1, debug=False):
+    def __init__(self, ckp: str, spt: str, apl_count: int, apl_type: str = (0, ""), timer=12000, run_time=1, debug=False):
         self.checkpoint = ckp
         self.support = spt
-        self.counts = int(apl[0])  # apple counts
-        self.apple = apl[1]
+        self.counts = int(apl_count)  # apple counts
+        self.apple = apl_type
         self.timer = int(timer)
         self.cfg = ConfigParser()
         self.cfg.read("core/button.ini")
@@ -82,7 +82,7 @@ class auto():
                 remain /= 60.0
                 remain = round(remain, 1)
                 print("[INFO] Remain", remain, "minutes", end="\r")
-            for i in range(30):
+            for i in range(30):  # note i用來計時沒用到
                 tEnd = time.time()
                 if int(tEnd - tStart) >= timer:
                     break
@@ -121,7 +121,6 @@ class auto():
                             print("have bar")
                         flag2 = False
                         end_pos = util.standby("core/images/friendEnd.png")
-                        end_pos = end_pos[:1]
                         if end_pos == False:
                             print("[INFO] End of friend list")
                             self.update_support()
@@ -181,7 +180,7 @@ class auto():
         util.tap(pos)
         time.sleep(0.5)
 
-    def select_cards(self, cards: [int]):
+    def select_cards(self, cards):
         time.sleep(1)
         while not util.standby("core/images/attack.png"):
             print("[BATTLE] Waiting for Attack button", end="\r")
@@ -275,3 +274,5 @@ class auto():
             self.now_time, int(self.t_end-self.t_begin), self.total_time))
         if continue_flag:
             self.quick_start(ckp)
+        elif util.standby("core/images/noap.png"):
+            util.tap((635, 610))

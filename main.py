@@ -6,7 +6,7 @@ from core.auto import auto
 
 if __name__ == '__main__':
     print('請輸入設定檔名稱(不需輸入.ini):')
-    cfg_name =  input()
+    cfg_name = input()
     ini_path = "UserData/config/" + cfg_name + ".ini"
     while not os.path.isfile(ini_path):
         print('請輸入設定檔名稱(不需輸入.ini):')
@@ -35,24 +35,10 @@ if __name__ == '__main__':
     while not run_times.isdigit():
         os.system('cls')
         run_times = input("請輸入次數")
-    round = auto(ckp, support, (int(apple_count), apple),
-                 int(recover_time) * 60, run_time=int(run_times))
+    round = auto(ckp, support, int(apple_count), apple, int(
+        recover_time) * 60, run_time=int(run_times))
     instr = decoder.decode(codelist)
     round.quick_start()
     for runs in range(int(run_times)):
         for i in range(1, len(instr)):
             exec(instr[i])
-
-    # total_time = 0
-    # counter = 0
-    # for i in range(int(run_times)):
-    #     print("Round:", i+1)
-    #     instr = decoder.decode(codelist)
-    #     tstart = time.time()
-    #     for i in range(len(instr)):
-    #         exec(instr[i])
-    #     tend = time.time()
-    #     total_time += int(tend - tstart)
-    #     counter += 1
-    #     print("執行 %s 次;耗時 %d 秒;共計 %d 秒" %
-    #           (counter, int(tend - tstart), total_time))
