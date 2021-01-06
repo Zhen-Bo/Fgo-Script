@@ -6,7 +6,7 @@ from core.auto import auto
 
 if __name__ == '__main__':
     print('請輸入設定檔名稱(不需輸入.ini):')
-    cfg_name = "3T"  # input()
+    cfg_name =  input()
     ini_path = "UserData/config/" + cfg_name + ".ini"
     while not os.path.isfile(ini_path):
         print('請輸入設定檔名稱(不需輸入.ini):')

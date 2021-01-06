@@ -77,11 +77,11 @@ class auto():
         while not int(tEnd - tStart) >= timer:
             remain = timer - int(tEnd - tStart)
             if remain <= 60:
-                print("[INFO] Remain", remain, "seconds")
+                print("[INFO] Remain", remain, "seconds", end="\r")
             else:
                 remain /= 60.0
                 remain = round(remain, 1)
-                print("[INFO] Remain", remain, "minutes")
+                print("[INFO] Remain", remain, "minutes", end="\r")
             for i in range(30):
                 tEnd = time.time()
                 if int(tEnd - tStart) >= timer:
@@ -246,7 +246,7 @@ class auto():
             util.tap((920, 45))
             time.sleep(0.2)
         util.tap((1105, 670))
-        if self.now_time <= self.run_time:
+        if self.now_time < self.run_time:
             continue_flag = True
         else:
             continue_flag = False
@@ -275,49 +275,3 @@ class auto():
             self.now_time, int(self.t_end-self.t_begin), self.total_time))
         if continue_flag:
             self.quick_start(ckp)
-
-        # flag = 0
-        # while not util.standby(self.checkpoint):
-        #     if flag == 0 and util.standby("core/images/friendrequest.png"):
-        #         print("[FINISH] Check friend request screen")
-        #         util.tap((330, 610))
-        #         print("[FINISH] Reject friend request")
-        #         flag = 1
-        #     elif flag == 1:
-        #         util.tap((920, 45))
-        #     else:
-        #         util.tap((920, 45))
-        #     time.sleep(1)
-        # self.t_end = time.time()
-        # self.total_time += int(self.t_end-self.t_begin)
-        # print("執行 {0} 次;用時 {1} 秒; 總計 {2} 秒;".format(
-        #     self.now_time, int(self.t_end-self.t_begin), self.total_time))
-
-    def waiting_phase(self, phase: int):
-        if phase == 1:
-            while not util.standby("core/images/phase1.png", 0.78):
-                util.tap((920, 45))
-                if self.debug:
-                    print("Waiting for phase1")
-                time.sleep(0.2)
-        elif phase == 2:
-            while not util.standby("core/images/phase2.png", 0.78):
-                util.tap((920, 45))
-                if self.debug:
-                    print("Waiting for phase2")
-                self.needattack()
-                time.sleep(0.2)
-        elif phase == 3:
-            while not util.standby("core/images/phase3.png", 0.78):
-                util.tap((920, 45))
-                if self.debug:
-                    print("Waiting for phase3")
-                self.needattack()
-                time.sleep(0.2)
-
-    def needattack(self):
-        if util.standby("core/images/attack.png"):
-            print("[BATTLE] Need extra attack")
-            self.select_cards([1, 2, 3])
-        else:
-            print("[BATTLE] Dont need extra attack")
