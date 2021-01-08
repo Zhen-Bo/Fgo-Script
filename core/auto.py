@@ -42,9 +42,14 @@ class auto():
         self.t_begin = time.time()
         if util.standby("core/images/noap.png"):
             print("[INFO] Out of AP!")
-            if self.counts > 0:
+            if self.counts >= 0:
                 self.counts -= 1
-                self.eat_apple()
+                if self.counts == -1:
+                    util.tap((635, 610))
+                    self.wait_ap(self.timer)
+                    self.select_task(self.checkpoint, first=True)
+                else:
+                    self.eat_apple()
             elif self.counts == -1:
                 util.tap((635, 610))
                 self.wait_ap(self.timer)
