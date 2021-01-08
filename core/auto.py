@@ -137,7 +137,7 @@ class auto():
                                 gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
                 else:
                     end_pos = util.standby("core/images/friendEnd.png")
-                    if end_pos[0] != False:
+                    if end_pos != False:
                         print("[INFO] End of friend list")
                         self.update_support()
                         flag2 = True
