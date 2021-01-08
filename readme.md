@@ -24,6 +24,8 @@
 首先把這個專案下載下來後解壓縮,並安裝python
 開啟cmd切換到此資料夾路靜候執行pip install -r requirements.txt
 安裝好後執行python main.py即可執行
+!!!:fire::fire::fire:注意事項:fire::fire::fire:!!!
+要確保你的戰鬥可以透過寶具三連或是任意普攻在3T內通關再使用這個腳本
 
 ------------
 
