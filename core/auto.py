@@ -260,6 +260,7 @@ class auto():
         while flag:
             time.sleep(0.5)
             pos = util.standby("core/images/friendrequest.png")
+            util.tap((920, 45))
             if pos and not friend_flag:
                 util.tap((330, 610))
                 friend_flag = True
@@ -268,7 +269,7 @@ class auto():
                 pos = util.standby("core/images/continue.png")
                 if pos:
                     flag = False
-                elif util.standby(self.checkpoint):  # elif
+                elif util.standby(self.checkpoint):
                     flag = False
                     ckp = True
         self.t_end = time.time()
