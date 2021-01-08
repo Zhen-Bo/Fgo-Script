@@ -117,7 +117,7 @@ class auto():
                 print("[INFO] Friend not found")
                 if flag2:
                     bar_pos = util.standby("core/images/bar.png")
-                    if bar_pos == False:
+                    if bar_pos:
                         if self.debug:
                             print("no bar")
                         self.update_support()
@@ -126,7 +126,7 @@ class auto():
                             print("have bar")
                         flag2 = False
                         end_pos = util.standby("core/images/friendEnd.png")
-                        if end_pos == False:
+                        if end_pos:
                             print("[INFO] End of friend list")
                             self.update_support()
                             flag2 = True

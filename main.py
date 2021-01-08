@@ -38,7 +38,7 @@ if __name__ == '__main__':
     round = auto(ckp, support, int(apple_count), apple, int(
         recover_time) * 60, run_time=int(run_times))
     instr = decoder.decode(codelist)
-    round.quick_start()
+    round.quick_start(True)
     for runs in range(int(run_times)):
         for i in range(1, len(instr)):
             exec(instr[i])
