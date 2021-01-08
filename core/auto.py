@@ -26,13 +26,13 @@ class auto():
         print(self.cfg.sections())
 
     def quick_start(self, first=False):
-        self.select_task(self.checkpoint, first=False)
+        self.select_task(self.checkpoint, first)
         self.advance_support()
         if first or self.now_time == 1:
             self.start_battle()
 
     def select_task(self, ckp: str, first=False):
-        if self.now_time == 0 or first == True:
+        if first or self.now_time == 0:
             print("[INFO] Waiting Task selected")
             while not util.standby(self.checkpoint):
                 time.sleep(0.2)
@@ -263,9 +263,7 @@ class auto():
                 pos = util.standby("core/images/continue.png")
                 if pos:
                     flag = False
-                    util.tap((int(pos[0][0])+int(pos[2]/2),
-                              int(pos[0][1])+int(pos[1]/2)))
-                elif util.standby(self.checkpoint):
+                elif util.standby(self.checkpoint):  # elif
                     flag = False
                     ckp = True
         self.t_end = time.time()
@@ -273,6 +271,15 @@ class auto():
         print("執行 {0} 次;用時 {1} 秒; 總計 {2} 秒;".format(
             self.now_time, int(self.t_end-self.t_begin), self.total_time))
         if continue_flag:
+            if not ckp:
+                pos = util.standby("core/images/continue.png")
+                util.tap((int(pos[0][0])+int(pos[2]/2),
+                          int(pos[0][1])+int(pos[1]/2)))
             self.quick_start(ckp)
         elif util.standby("core/images/noap.png"):
             util.tap((635, 610))
+        elif not continue_flag:
+            pos = util.standby("core/images/close.png")
+            while not pos:
+                pos = util.standby("core/images/close.png")
+            util.tap(pos)
