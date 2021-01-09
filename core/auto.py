@@ -111,6 +111,7 @@ class auto():
             spt = self.support
         flag1 = True
         flag2 = True
+        # TODO 檢查確定進選好有畫面後再繼續動作
         while flag1:
             spt_pos = util.standby(spt)
             if spt_pos == False:
@@ -138,7 +139,7 @@ class auto():
                                     gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
                 else:
                     end_pos = util.standby(
-                        "core/images/friendEnd.png", acc=0.8, special=True)
+                        "core/images/friendEnd.png", acc=0.8)
                     if end_pos != False:
                         print("[INFO] End of friend list")
                         self.update_support()
@@ -288,6 +289,7 @@ class auto():
         elif util.standby("core/images/noap.png"):
             util.tap((635, 610))
         elif not continue_flag:
+            # bug 貌似會/system/bin/sh: syntax error: '(' unexpected
             pos = util.standby("core/images/close.png")
             while not pos:
                 pos = util.standby("core/images/close.png")

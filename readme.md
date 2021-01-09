@@ -118,5 +118,5 @@ Ex.我如果開頭要開莉莉絲寶具.剩下兩張卡選哪張都無所謂
 
 ------------
 #### 參考專案
-will7101/fgo-bot:https://github.com/will7101/fgo-bot(Archived)
-Meowcolm024/FGO-Automata:https://github.com/Meowcolm024/FGO-Automata
+[will7101/fgo-bot(Archived)](https://github.com/will7101/fgo-bot)
+[Meowcolm024/FGO-Automata](https://github.com/Meowcolm024/FGO-Automata)
