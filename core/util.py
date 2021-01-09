@@ -2,8 +2,12 @@ from cv2 import cv2
 from core import adb
 
 debug = False
-
 adbkit = adb.adbKit()
+
+
+def get_width_muti():
+    sample = adbkit.screenshots(raw=True)
+    adbkit.capmuti = sample.shape[0] / 720
 
 
 def standby(template, acc=0.85, special=False):
@@ -29,7 +33,9 @@ def standby(template, acc=0.85, special=False):
     if reslist[1] > acc:
         if debug:
             print("[Detect]acc rate:", round(reslist[1], 2))
-        return reslist[3], find_height, find_width
+        pos = [reslist[3][0], reslist[3][1]]
+        pos = [x*adbkit.capmuti for x in pos]
+        return pos, find_height*adbkit.capmuti, find_width*adbkit.capmuti
     else:
         if debug:
             print("[Detect]acc rate:", round(reslist[1], 2))
@@ -39,8 +45,11 @@ def standby(template, acc=0.85, special=False):
             return False
 
 
-def tap(pos):
-    adbkit.click(pos[0], pos[1])
+def tap(pos, raw=False):
+    if raw:
+        adbkit.click(pos[0], pos[1], raw=True)
+    else:
+        adbkit.click(pos[0], pos[1])
 
 
 def swipe(x1, y1, x2, y2, delay):

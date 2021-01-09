@@ -21,6 +21,7 @@ class auto():
         self.t_begin = 0
         self.t_end = 0
         util.debug = self.debug
+        util.get_width_muti()
 
     def debugfuc(self):
         print(self.cfg.sections())
@@ -37,7 +38,6 @@ class auto():
             while not util.standby(self.checkpoint):
                 time.sleep(0.2)
             util.tap((1100, 170))
-            time.sleep(1)
         time.sleep(1)
         self.t_begin = time.time()
         if util.standby("core/images/noap.png"):
@@ -135,6 +135,7 @@ class auto():
                             gap_pos, gap_h, gap_w = util.standby(
                                 "core/images/friend_gap.png", 0.8, True)
                             if gap_pos:
+                                gap_pos = [x for x in gap_pos]
                                 util.swipe(
                                     gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
                 else:
@@ -150,12 +151,13 @@ class auto():
                         gap_pos, gap_h, gap_w = util.standby(
                             "core/images/friend_gap.png", 0.8, True)
                         if gap_pos:
+                            gap_pos = [x for x in gap_pos]
                             util.swipe(
                                 gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
             else:
                 flag1 = False
                 util.tap((int(spt_pos[0][0])+int(spt_pos[2]/2),
-                          int(spt_pos[0][1])+int(spt_pos[1]/2)))
+                          int(spt_pos[0][1])+int(spt_pos[1]/2)), raw=True)
 
     def start_battle(self):
         while not util.standby("core/images/start.png"):
@@ -169,6 +171,7 @@ class auto():
             time.sleep(1)
         pos = self.cfg['skills']['%s' % skill]
         pos = pos.split(',')
+        pos = [x for x in pos]
         util.tap(pos)
         if tar != 0:
             print("[Skill] Use servent", str(int((skill-1)/3 + 1)),
@@ -186,6 +189,7 @@ class auto():
             time.sleep(0.2)
         pos = self.cfg['servent']['%s' % servant]
         pos = pos.split(',')
+        pos = [x for x in pos]
         util.tap(pos)
         time.sleep(0.5)
 
@@ -197,6 +201,7 @@ class auto():
         # tap ATTACK
         pos = self.cfg['attack']['button']
         pos = pos.split(',')
+        pos = [x for x in pos]
         util.tap(pos)
         time.sleep(1.2)
         while len(cards) < 3:
@@ -208,6 +213,7 @@ class auto():
         for card in cards:
             pos = self.cfg['attack']['%s' % card]
             pos = pos.split(',')
+            pos = [x for x in pos]
             util.tap(pos)
         print("[BATTLE] Selected cards: ", cards)
 
@@ -218,6 +224,7 @@ class auto():
         self.toggle_master_skill()
         pos = self.cfg['master']['%s' % skill]
         pos = pos.split(',')
+        pos = [x for x in pos]
         util.tap(pos)
         print("[M_Skill] Use master skill", skill)
         if org != 0 and tar == 0:
@@ -231,6 +238,7 @@ class auto():
             time.sleep(0.2)
         pos = self.cfg['master']['button']
         pos = pos.split(',')
+        pos = [x for x in pos]
         util.tap(pos)
         print("[M_Skill] Toggle master skill bar")
 
@@ -240,10 +248,12 @@ class auto():
             time.sleep(0.2)
         pos = self.cfg['servent']['s%s', org]
         pos = pos.split(',')
+        pos = [x for x in pos]
         util.tap(pos)
         time.sleep(0.1)
         pos = self.cfg['servent']['a%s', tar]
         pos = pos.split(',')
+        pos = [x for x in pos]
         util.tap(pos)
         time.sleep(0.1)
         util.tap((650, 620))  # confirm btn
@@ -252,7 +262,7 @@ class auto():
         while not util.standby("core/images/next.png"):
             print("[FINISH] Waiting next button", end='\r')
             util.tap((920, 45))
-            time.sleep(0.2)
+        print("[FINISH] Battle finish      ")
         util.tap((1105, 670))
         if self.now_time < self.run_time:
             continue_flag = True
@@ -262,7 +272,7 @@ class auto():
         flag = True
         friend_flag = False
         while flag:
-            time.sleep(0.5)
+            time.sleep(0.1)
             pos = util.standby("core/images/friendrequest.png")
             util.tap((920, 45))
             if pos and not friend_flag:
@@ -284,7 +294,7 @@ class auto():
             if not ckp:
                 pos = util.standby("core/images/continue.png")
                 util.tap((int(pos[0][0])+int(pos[2]/2),
-                          int(pos[0][1])+int(pos[1]/2)))
+                          int(pos[0][1])+int(pos[1]/2)), raw=True)
             self.quick_start(ckp)
         elif util.standby("core/images/noap.png"):
             util.tap((635, 610))
@@ -292,5 +302,11 @@ class auto():
             # bug 貌似會/system/bin/sh: syntax error: '(' unexpected
             pos = util.standby("core/images/close.png")
             while not pos:
+                ckp = util.standby(self.checkpoint)
+                if ckp:
+                    break
                 pos = util.standby("core/images/close.png")
-            util.tap(pos)
+                if pos:
+                    pos = [x for x in pos]
+                    util.tap(pos)
+                    break
