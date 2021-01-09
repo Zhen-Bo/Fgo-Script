@@ -161,7 +161,7 @@ class auto():
         while not util.standby("core/images/start.png"):
             time.sleep(0.2)
         util.tap((1180, 670))
-        print("[INFO] Battle started.")
+        print("[INFO] Battle started.  ")
 
     def select_servant_skill(self, skill: int, tar: int = 0):
         while not util.standby("core/images/attack.png"):

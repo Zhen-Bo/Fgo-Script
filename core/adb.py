@@ -18,6 +18,10 @@ class adbKit(object):
             image_bytes, dtype='uint8'), cv2.IMREAD_COLOR)
         return image
 
+    #TODO 多解析度支援
+    def reimage(self, images):
+        pass
+
     def click(self, pointx, pointy):
         Px = str(pointx)
         Py = str(pointy)
