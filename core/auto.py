@@ -82,11 +82,11 @@ class auto():
         while not int(tEnd - tStart) >= timer:
             remain = timer - int(tEnd - tStart)
             if remain <= 60:
-                print("[INFO] Remain", remain, "seconds", end="\r")
+                print("[INFO] Remain", remain, "seconds", end='\r')
             else:
                 remain /= 60.0
                 remain = round(remain, 1)
-                print("[INFO] Remain", remain, "minutes", end="\r")
+                print("[INFO] Remain", remain, "minutes", end='\r')
             for i in range(30):  # note i用來計時沒用到
                 tEnd = time.time()
                 if int(tEnd - tStart) >= timer:
@@ -114,7 +114,7 @@ class auto():
         while flag1:
             spt_pos = util.standby(spt)
             if spt_pos == False:
-                print("[INFO] Friend not found")
+                print("[INFO] Friend not found", end='\r')
                 if flag2:
                     bar_pos = util.standby("core/images/bar.png")
                     if bar_pos:
@@ -133,10 +133,12 @@ class auto():
                         else:
                             gap_pos, gap_h, gap_w = util.standby(
                                 "core/images/friend_gap.png", 0.8, True)
-                            util.swipe(
-                                gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
+                            if gap_pos:
+                                util.swipe(
+                                    gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
                 else:
-                    end_pos = util.standby("core/images/friendEnd.png")
+                    end_pos = util.standby(
+                        "core/images/friendEnd.png", acc=0.8, special=True)
                     if end_pos != False:
                         print("[INFO] End of friend list")
                         self.update_support()
@@ -146,8 +148,9 @@ class auto():
                             print("swipe down")
                         gap_pos, gap_h, gap_w = util.standby(
                             "core/images/friend_gap.png", 0.8, True)
-                        util.swipe(
-                            gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
+                        if gap_pos:
+                            util.swipe(
+                                gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
             else:
                 flag1 = False
                 util.tap((int(spt_pos[0][0])+int(spt_pos[2]/2),
@@ -161,7 +164,7 @@ class auto():
 
     def select_servant_skill(self, skill: int, tar: int = 0):
         while not util.standby("core/images/attack.png"):
-            print("[BATTLE] Waiting for Attack button", end="\r")
+            print("[BATTLE] Waiting for Attack button", end='\r')
             time.sleep(1)
         pos = self.cfg['skills']['%s' % skill]
         pos = pos.split(',')
@@ -188,7 +191,7 @@ class auto():
     def select_cards(self, cards):
         time.sleep(1)
         while not util.standby("core/images/attack.png"):
-            print("[BATTLE] Waiting for Attack button", end="\r")
+            print("[BATTLE] Waiting for Attack button", end='\r')
             time.sleep(0.2)
         # tap ATTACK
         pos = self.cfg['attack']['button']
@@ -209,7 +212,7 @@ class auto():
 
     def select_master_skill(self, skill: int, org: int = 0, tar: int = 0):
         while not util.standby("core/images/attack.png"):
-            print("[BATTLE] Waiting for Attack button", end="\r")
+            print("[BATTLE] Waiting for Attack button", end='\r')
             time.sleep(0.2)
         self.toggle_master_skill()
         pos = self.cfg['master']['%s' % skill]
@@ -223,7 +226,7 @@ class auto():
 
     def toggle_master_skill(self):
         while not util.standby("core/images/attack.png"):
-            print("[BATTLE] Waiting for Attack button", end="\r")
+            print("[BATTLE] Waiting for Attack button", end='\r')
             time.sleep(0.2)
         pos = self.cfg['master']['button']
         pos = pos.split(',')

@@ -33,7 +33,10 @@ def standby(template, acc=0.85, special=False):
     else:
         if debug:
             print("[Detect]acc rate:", round(reslist[1], 2))
-        return False
+        if special:
+            return False, 0, 0
+        else:
+            return False
 
 
 def tap(pos):
