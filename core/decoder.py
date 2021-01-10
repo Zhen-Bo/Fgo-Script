@@ -67,7 +67,6 @@ def chk_skill(skill):
 
 def decode(code):
     combat_order = []
-    combat_order.append("round.quick_start()")
     for i in range(3):
         combat_order += chk_skill(code[i])
         if len(chk_card(code[i+3])) == 1:
