@@ -28,14 +28,11 @@ if __name__ == '__main__':
 
     codelist = [battle1_str, battle2_str,
                 battle3_str, crd1_str, crd2_str, crd3_str]
-    images_path = "core/images"
-    ckp = images_path + "/menu.png"
-
     run_times = input("請輸入次數")
     while not run_times.isdigit():
         os.system('cls')
         run_times = input("請輸入次數")
-    round = auto(ckp, support, int(apple_count), apple, int(
+    round = auto("core/images/menu.png", support, int(apple_count), apple, int(
         recover_time) * 60, run_time=int(run_times))
     instr = decoder.decode(codelist)
     round.quick_start(True)
