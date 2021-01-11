@@ -1,5 +1,8 @@
 from cv2 import cv2
 from core import adb
+import sys
+import errno
+import os
 
 debug = False
 adbkit = adb.adbKit()
@@ -17,6 +20,8 @@ def standby(template, acc=0.85, special=False):
         cv2.rectangle(target_img, (0, 0), (1280, 420),
                       color=(0, 0, 0), thickness=-1)
     find_img = cv2.imread(str(template))
+    if find_img is None:
+        sys.exit("[Error]File not found " + template)
     find_height, find_width = find_img.shape[:2:]
 
     # 模板匹配

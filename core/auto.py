@@ -6,7 +6,7 @@ from configparser import ConfigParser
 
 
 class auto():
-    def __init__(self, ckp: str, spt: str, apl_count: int, apl_type: str = (0, ""), timer=12000, run_time=1, debug=False):
+    def __init__(self, ckp: str, spt: str, apl_count: int, apl_type: str = (0, ""), timer=12000, run_time=1, ver="JP", debug=False):
         self.checkpoint = ckp
         self.support = spt
         self.counts = int(apl_count)  # apple counts
@@ -22,9 +22,11 @@ class auto():
         self.t_end = 0
         util.debug = self.debug
         util.get_width_muti()
+        self.ver = ver
 
-    def debugfuc(self):
-        print(self.cfg.sections())
+    def get_img_path(self, img_name):
+        img_path = "core/images/{0}/{1}".format(self.ver, img_name)
+        return img_path
 
     def quick_start(self, first=False):
         self.select_task(self.checkpoint, first)
@@ -35,12 +37,12 @@ class auto():
     def select_task(self, ckp: str, first=False):
         if first or self.now_time == 0:
             print("[INFO] Waiting Task selected")
-            while not util.standby(self.checkpoint):
+            while not util.standby(self.get_img_path(self.checkpoint)):
                 time.sleep(0.2)
             util.tap((1100, 170))
         time.sleep(1)
         self.t_begin = time.time()
-        if util.standby("core/images/noap.png"):
+        if util.standby(self.get_img_path("noap.png")):
             print("[INFO] Out of AP!")
             if self.counts >= 0:
                 self.counts -= 1
@@ -94,10 +96,10 @@ class auto():
                 time.sleep(1)
 
     def update_support(self):
-        if util.standby("core/images/update.png"):
+        if util.standby(self.get_img_path("update.png")):
             util.tap((835, 125))
             time.sleep(0.5)
-            if util.standby("core/images/close.png"):
+            if util.standby(self.get_img_path("close.png")):
                 util.tap((640, 560))
                 print("[INFO] Wait to refresh friend list")
                 time.sleep(2)
@@ -117,7 +119,7 @@ class auto():
             if spt_pos == False:
                 print("[INFO] Friend not found", end='\r')
                 if flag2:
-                    bar_pos = util.standby("core/images/bar.png")
+                    bar_pos = util.standby(self.get_img_path("bar.png"))
                     if bar_pos:
                         if self.debug:
                             print("no bar")
@@ -126,21 +128,22 @@ class auto():
                         if self.debug:
                             print("have bar")
                         flag2 = False
-                        end_pos = util.standby("core/images/friendEnd.png")
+                        end_pos = util.standby(
+                            self.get_img_path("friendEnd.png"))
                         if end_pos:
                             print("[INFO] End of friend list")
                             self.update_support()
                             flag2 = True
                         else:
                             gap_pos, gap_h, gap_w = util.standby(
-                                "core/images/friend_gap.png", 0.8, True)
+                                self.get_img_path("friend_gap.png"), 0.8, True)
                             if gap_pos:
                                 gap_pos = [x for x in gap_pos]
                                 util.swipe(
                                     gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
                 else:
                     end_pos = util.standby(
-                        "core/images/friendEnd.png", acc=0.8)
+                        self.get_img_path("friendEnd.png"), acc=0.8)
                     if end_pos != False:
                         print("[INFO] End of friend list")
                         self.update_support()
@@ -149,7 +152,7 @@ class auto():
                         if self.debug:
                             print("swipe down")
                         gap_pos, gap_h, gap_w = util.standby(
-                            "core/images/friend_gap.png", 0.8, True)
+                            self.get_img_path("friend_gap.png"), 0.8, True)
                         if gap_pos:
                             gap_pos = [x for x in gap_pos]
                             util.swipe(
@@ -160,18 +163,17 @@ class auto():
                           int(spt_pos[0][1])+int(spt_pos[1]/2)), raw=True)
 
     def start_battle(self):
-        while not util.standby("core/images/start.png"):
+        while not util.standby(self.get_img_path("start.png")):
             time.sleep(0.2)
         util.tap((1180, 670))
         print("[INFO] Battle started.  ")
 
     def select_servant_skill(self, skill: int, tar: int = 0):
-        while not util.standby("core/images/attack.png"):
+        while not util.standby(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
             time.sleep(1)
         pos = self.cfg['skills']['%s' % skill]
         pos = pos.split(',')
-        pos = [x for x in pos]
         util.tap(pos)
         if tar != 0:
             print("[Skill] Use servent", str(int((skill-1)/3 + 1)),
@@ -184,24 +186,22 @@ class auto():
             time.sleep(1)
 
     def select_servant(self, servant: int):
-        while not util.standby("core/images/select.png"):
+        while not util.standby(self.get_img_path("select.png")):
             print("[SKILL] Waiting for servent select", end='\r')
             time.sleep(0.2)
         pos = self.cfg['servent']['%s' % servant]
         pos = pos.split(',')
-        pos = [x for x in pos]
         util.tap(pos)
         time.sleep(0.5)
 
     def select_cards(self, cards):
         time.sleep(1)
-        while not util.standby("core/images/attack.png"):
+        while not util.standby(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
             time.sleep(0.2)
         # tap ATTACK
         pos = self.cfg['attack']['button']
         pos = pos.split(',')
-        pos = [x for x in pos]
         util.tap(pos)
         time.sleep(1.2)
         while len(cards) < 3:
@@ -213,12 +213,11 @@ class auto():
         for card in cards:
             pos = self.cfg['attack']['%s' % card]
             pos = pos.split(',')
-            pos = [x for x in pos]
             util.tap(pos)
         print("[BATTLE] Selected cards: ", cards)
 
     def select_master_skill(self, skill: int, org: int = 0, tar: int = 0):
-        while not util.standby("core/images/attack.png"):
+        while not util.standby(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
             time.sleep(0.2)
         self.toggle_master_skill()
@@ -233,33 +232,30 @@ class auto():
             self.change_servant(org, tar)
 
     def toggle_master_skill(self):
-        while not util.standby("core/images/attack.png"):
+        while not util.standby(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
             time.sleep(0.2)
         pos = self.cfg['master']['button']
         pos = pos.split(',')
-        pos = [x for x in pos]
         util.tap(pos)
         print("[M_Skill] Toggle master skill bar")
 
     def change_servant(self, org: int, tar: int):
-        while not util.standby("core/images/order_change.png"):
+        while not util.standby(self.get_img_path("order_change.png")):
             print("[M_Skill] Waiting for order change")
             time.sleep(0.2)
         pos = self.cfg['servent']['s%s', org]
         pos = pos.split(',')
-        pos = [x for x in pos]
         util.tap(pos)
         time.sleep(0.1)
         pos = self.cfg['servent']['a%s', tar]
         pos = pos.split(',')
-        pos = [x for x in pos]
         util.tap(pos)
         time.sleep(0.1)
         util.tap((650, 620))  # confirm btn
 
     def finish_battle(self):
-        while not util.standby("core/images/next.png"):
+        while not util.standby(self.get_img_path("next.png")):
             print("[FINISH] Waiting next button", end='\r')
             util.tap((920, 45))
         print("[FINISH] Battle finish      ")
@@ -273,17 +269,17 @@ class auto():
         friend_flag = False
         while flag:
             time.sleep(0.1)
-            pos = util.standby("core/images/friendrequest.png")
+            pos = util.standby(self.get_img_path("friendrequest.png"))
             util.tap((920, 45))
             if pos and not friend_flag:
                 util.tap((330, 610))
                 friend_flag = True
                 print("[FINISH] Reject friend request")
             else:
-                pos = util.standby("core/images/continue.png")
+                pos = util.standby(self.get_img_path("continue.png"))
                 if pos:
                     flag = False
-                elif util.standby(self.checkpoint):
+                elif util.standby(self.get_img_path(self.checkpoint)):
                     flag = False
                     ckp = True
         self.t_end = time.time()
@@ -292,21 +288,20 @@ class auto():
             self.now_time, int(self.t_end-self.t_begin), self.total_time))
         if continue_flag:
             if not ckp:
-                pos = util.standby("core/images/continue.png")
+                pos = util.standby(self.get_img_path("continue.png"))
                 util.tap((int(pos[0][0])+int(pos[2]/2),
                           int(pos[0][1])+int(pos[1]/2)), raw=True)
             self.quick_start(ckp)
-        elif util.standby("core/images/noap.png"):
+        elif util.standby(self.get_img_path("noap.png")):
             util.tap((635, 610))
         elif not continue_flag:
             # bug 貌似會/system/bin/sh: syntax error: '(' unexpected
-            pos = util.standby("core/images/close.png")
+            pos = util.standby(self.get_img_path("close.png"))
             while not pos:
-                ckp = util.standby(self.checkpoint)
-                if ckp:
-                    break
-                pos = util.standby("core/images/close.png")
+                pos = util.standby(self.get_img_path("close.png"))
                 if pos:
-                    pos = [x for x in pos]
-                    util.tap(pos)
+                    util.tap(pos[0])
+                    break
+                ckp = util.standby(self.get_img_path(self.checkpoint))
+                if ckp:
                     break

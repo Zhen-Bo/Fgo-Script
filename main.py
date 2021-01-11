@@ -5,17 +5,21 @@ from core import decoder
 from core.auto import auto
 
 if __name__ == '__main__':
-    print('請輸入設定檔名稱(不需輸入.ini):')
-    cfg_name = input()
+    cfg_name = input("請輸入設定檔名稱(不需輸入.ini):")
     ini_path = "UserData/config/" + cfg_name + ".ini"
     while not os.path.isfile(ini_path):
-        print('請輸入設定檔名稱(不需輸入.ini):')
-        cfg_name = input()
+        cfg_name = input("請輸入設定檔名稱(不需輸入.ini):")
         ini_path = "UserData/config/" + cfg_name + ".ini"
     cfg = ConfigParser()
     cfg.read(ini_path)
-
-    support = "UserData/support/" + cfg['support']['support']
+    ver = input("請輸入版本:JP請直接按Enter,CN請輸入1:")
+    while not ver == '' and not ver == "1":
+        ver = input("請輸入版本:JP請直接按Enter,CN請輸入1:")
+    if ver == "1":
+        ver = "CN"
+    else:
+        ver = "JP"
+    support = cfg['support']['support']
     apple_count = cfg['ap_recover']['count']
     apple = cfg['ap_recover']['apple']
     recover_time = cfg['recover_time']['recover_time']
@@ -32,8 +36,8 @@ if __name__ == '__main__':
     while not run_times.isdigit():
         os.system('cls')
         run_times = input("請輸入次數")
-    round = auto("core/images/menu.png", support, int(apple_count), apple, int(
-        recover_time) * 60, run_time=int(run_times))
+    round = auto("menu.png", support, int(apple_count), apple, int(
+        recover_time) * 60, run_time=int(run_times), ver=ver)
     instr = decoder.decode(codelist)
     round.quick_start(True)
     for runs in range(int(run_times)):
