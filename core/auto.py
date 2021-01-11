@@ -8,7 +8,7 @@ from configparser import ConfigParser
 class auto():
     def __init__(self, ckp: str, spt: str, apl_count: int, apl_type: str = (0, ""), timer=12000, run_time=1, ver="JP", debug=False):
         self.checkpoint = ckp
-        self.support = spt
+        self.support = "UserData/support/" + spt
         self.counts = int(apl_count)  # apple counts
         self.apple = apl_type
         self.timer = int(timer)
@@ -30,7 +30,7 @@ class auto():
 
     def quick_start(self, first=False):
         self.select_task(self.checkpoint, first)
-        self.advance_support()
+        self.advance_support(self.support)
         if first or self.now_time == 1:
             self.start_battle()
 
@@ -109,8 +109,6 @@ class auto():
             time.sleep(0.5)
 
     def advance_support(self, spt: str = None, tms: int = 3):
-        if spt is None:
-            spt = self.support
         flag1 = True
         flag2 = True
         # TODO 檢查確定進選好有畫面後再繼續動作

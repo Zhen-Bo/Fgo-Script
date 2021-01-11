@@ -1,5 +1,6 @@
 from configparser import ConfigParser
-import time
+import errno
+import os
 import os
 from core import decoder
 from core.auto import auto
@@ -12,13 +13,7 @@ if __name__ == '__main__':
         ini_path = "UserData/config/" + cfg_name + ".ini"
     cfg = ConfigParser()
     cfg.read(ini_path)
-    ver = input("請輸入版本:JP請直接按Enter,CN請輸入1:")
-    while not ver == '' and not ver == "1":
-        ver = input("請輸入版本:JP請直接按Enter,CN請輸入1:")
-    if ver == "1":
-        ver = "CN"
-    else:
-        ver = "JP"
+    ver = cfg['version']['version']
     support = cfg['support']['support']
     apple_count = cfg['ap_recover']['count']
     apple = cfg['ap_recover']['apple']
@@ -36,10 +31,15 @@ if __name__ == '__main__':
     while not run_times.isdigit():
         os.system('cls')
         run_times = input("請輸入次數")
-    round = auto("menu.png", support, int(apple_count), apple, int(
-        recover_time) * 60, run_time=int(run_times), ver=ver)
-    instr = decoder.decode(codelist)
-    round.quick_start(True)
-    for runs in range(int(run_times)):
-        for i in range(0, len(instr)):
-            exec(instr[i])
+    try:
+        round = auto("menu.png", support, int(apple_count), apple, int(
+            recover_time) * 60, run_time=int(run_times), ver=ver)
+        instr = decoder.decode(codelist)
+        round.quick_start(True)
+        for runs in range(int(run_times)):
+            for i in range(0, len(instr)):
+                exec(instr[i])
+    except Exception as e:
+        print("[ERROR] " + e)
+    finally:
+        print("fin")
