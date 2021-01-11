@@ -1,0 +1,22 @@
+[version]
+version = JP
+
+[support]
+support = CS.png
+
+[ap_recover]
+count = -1
+apple = 
+
+[recover_time]
+recover_time = 200
+
+[default_skill]
+battle1 = ab3c3de3f3gi
+battle2 = 
+battle3 = 
+
+[default_card]
+battle1 = cxx
+battle2 = cxx
+battle3 = cxx

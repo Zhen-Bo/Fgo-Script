@@ -16,7 +16,7 @@
 
 #### 推薦環境
 
-- bluestacks 4.250.1.1002(解析度 1280x720,240dpi,開啟 adb 連接)
+- bluestacks 4.250.1.1002(解析度 1280x720(2560x1440),240dpi,開啟 adb 連接)
 - python 3.7.9
 - opencv-python 4.2.0.32
 
@@ -28,7 +28,10 @@
 開啟 cmd 切換到此資料夾路靜候執行 pip install -r requirements.txt
 安裝好後執行 python main.py 即可執行
 !!!:fire::fire::fire:注意事項:fire::fire::fire:!!!
+
 要確保你的戰鬥可以透過寶具三連或是任意普攻在 3T 內通關再使用這個腳本
+
+目前支援繁中及日版,請在設定檔內做修改
 
 ---
 
@@ -40,6 +43,7 @@
 - [ ] 自動獲取助戰圖片
 - [ ] 複數助戰支援
 - [ ] 打包成 exe
+- [ ] 自動腳本產生器
 - [x] 多解析度支援
       ~~多加一個專門持續對模擬器截圖的線程,而非要判斷時才像模擬器截圖(無意義)~~
 
@@ -73,6 +77,8 @@
 
 #### 腳本設定
 
+- version
+  - versiion:設定為台版還是日版,台版請填 TW,日版請填 JP
 - support
   - support:你存放在 UserData/support 資料夾中你要使用的好友圖片名稱(需要副檔名)
 - ap_recover:吃蘋果選項
@@ -135,4 +141,5 @@ Ex.我如果開頭要開莉莉絲寶具.剩下兩張卡選哪張都無所謂
 #### 參考專案
 
 [will7101/fgo-bot(Archived)](https://github.com/will7101/fgo-bot)
+
 [Meowcolm024/FGO-Automata](https://github.com/Meowcolm024/FGO-Automata)
