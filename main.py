@@ -37,5 +37,5 @@ if __name__ == '__main__':
     instr = decoder.decode(codelist)
     round.quick_start(True)
     for runs in range(int(run_times)):
-        for i in range(1, len(instr)):
+        for i in range(0, len(instr)):
             exec(instr[i])
