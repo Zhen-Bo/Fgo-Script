@@ -30,6 +30,7 @@ class auto():
 
     def quick_start(self, first=False):
         self.select_task(self.checkpoint, first)
+        time.sleep(1)
         self.advance_support(self.support)
         if first or self.now_time == 1:
             self.start_battle()
@@ -38,9 +39,9 @@ class auto():
         if first or self.now_time == 0:
             print("[INFO] Waiting Task selected")
             while not util.standby(self.get_img_path(self.checkpoint)):
-                time.sleep(0.2)
+                pass
             util.tap((1100, 170))
-        time.sleep(1)
+        time.sleep(0.5)
         self.t_begin = time.time()
         if util.standby(self.get_img_path("noap.png")):
             print("[INFO] Out of AP!")
@@ -98,7 +99,7 @@ class auto():
     def update_support(self):
         if util.standby(self.get_img_path("update.png")):
             util.tap((835, 125))
-            time.sleep(0.5)
+            time.sleep(0.2)
             if util.standby(self.get_img_path("close.png")):
                 util.tap((640, 560))
                 print("[INFO] Wait to refresh friend list")
@@ -106,7 +107,6 @@ class auto():
             else:
                 util.tap((840, 560))
                 print("[INFO] friend list refresh")
-            time.sleep(0.5)
 
     def advance_support(self, spt: str = None, tms: int = 3):
         flag1 = True
@@ -162,41 +162,39 @@ class auto():
 
     def start_battle(self):
         while not util.standby(self.get_img_path("start.png")):
-            time.sleep(0.2)
+            pass
         util.tap((1180, 670))
         print("[INFO] Battle started.  ")
 
     def select_servant_skill(self, skill: int, tar: int = 0):
+        time.sleep(0.2)
         while not util.standby(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
-            time.sleep(1)
+            util.tap((920, 45))
         pos = self.cfg['skills']['%s' % skill]
         pos = pos.split(',')
         util.tap(pos)
         if tar != 0:
             print("[Skill] Use servent", str(int((skill-1)/3 + 1)),
                   "skill", str((skill-1) % 3 + 1), "to servent", tar)
-            time.sleep(1)
             self.select_servant(tar)
         else:
             print("[Skill] Use servent", str(int((skill-1)/3 + 1)),
                   "skill", str((skill-1) % 3 + 1), "      ")
-            time.sleep(1)
 
     def select_servant(self, servant: int):
+        time.sleep(0.2)
         while not util.standby(self.get_img_path("select.png")):
             print("[SKILL] Waiting for servent select", end='\r')
-            time.sleep(0.2)
         pos = self.cfg['servent']['%s' % servant]
         pos = pos.split(',')
         util.tap(pos)
-        time.sleep(0.5)
 
     def select_cards(self, cards):
-        time.sleep(1)
+        time.sleep(0.5)
         while not util.standby(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
-            time.sleep(0.2)
+            util.tap((920, 45))
         # tap ATTACK
         pos = self.cfg['attack']['button']
         pos = pos.split(',')
@@ -215,9 +213,10 @@ class auto():
         print("[BATTLE] Selected cards: ", cards)
 
     def select_master_skill(self, skill: int, org: int = 0, tar: int = 0):
+        time.sleep(0.3)
         while not util.standby(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
-            time.sleep(0.2)
+            util.tap((920, 45))
         self.toggle_master_skill()
         pos = self.cfg['master']['%s' % skill]
         pos = pos.split(',')
@@ -230,18 +229,19 @@ class auto():
             self.change_servant(org, tar)
 
     def toggle_master_skill(self):
+        time.sleep(0.2)
         while not util.standby(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
-            time.sleep(0.2)
+            util.tap((920, 45))
         pos = self.cfg['master']['button']
         pos = pos.split(',')
         util.tap(pos)
         print("[M_Skill] Toggle master skill bar")
 
     def change_servant(self, org: int, tar: int):
+        time.sleep(0.2)
         while not util.standby(self.get_img_path("order_change.png")):
             print("[M_Skill] Waiting for order change")
-            time.sleep(0.2)
         pos = self.cfg['servent']['s%s', org]
         pos = pos.split(',')
         util.tap(pos)
@@ -292,14 +292,12 @@ class auto():
             self.quick_start(ckp)
         elif util.standby(self.get_img_path("noap.png")):
             util.tap((635, 610))
-        elif not continue_flag:
-            # bug 貌似會/system/bin/sh: syntax error: '(' unexpected
+        elif continue_flag == False:
             pos = util.standby(self.get_img_path("close.png"))
             while not pos:
                 pos = util.standby(self.get_img_path("close.png"))
-                if pos:
-                    util.tap(pos[0])
-                    break
                 ckp = util.standby(self.get_img_path(self.checkpoint))
                 if ckp:
                     break
+            if pos and not ckp:
+                util.tap(pos[0], raw=True)
