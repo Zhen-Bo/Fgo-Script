@@ -7,7 +7,7 @@ from configparser import ConfigParser
 
 
 class auto():
-    def __init__(self, ckp: str, spt: str, apl_count: int, apl_type: str = (0, ""), timer=12000, run_time=1, ver="JP", debug=False):
+    def __init__(self, ckp, spt, apl_count, apl_type, devices, timer=12000, run_time=1, ver="JP", debug=False):
         self.path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.checkpoint = ckp
         self.support = []
@@ -22,7 +22,7 @@ class auto():
         self.now_time = 0
         self.t_begin = 0
         self.t_end = 0
-        self.adbtool = tool(debug=debug)
+        self.adbtool = tool(devices, debug=debug)
         self.ver = ver
         self.debug = debug
 

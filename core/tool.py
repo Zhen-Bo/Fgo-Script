@@ -6,15 +6,11 @@ import time
 
 
 class adbKit():
-    def __init__(self, debug=False) -> None:
+    def __init__(self, device, debug=False) -> None:
         self.path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.debug = debug
         self.capmuti = 1
-        os.system("{0}/adb/adb.exe kill-server".format(self.path))
-        os.system("{0}/adb/adb.exe start-server".format(self.path))
-        self.device = self.read_devices()
-        index = self.selectDevices(self.device)
-        self.device = self.device[index]
+        self.device = device
         self.breakline = self.get_SDK()
 
     def debug_get_write(self):
@@ -41,45 +37,7 @@ class adbKit():
         elif int(SDK_version[0]) <= 5:
             return '\r\r\n'
         else:
-            raise Exception("不是android5或android7")
-
-    def read_devices(self):
-        devices = subprocess.Popen("{0}/adb/adb.exe devices".format(self.path),
-                                   shell=True, stdout=subprocess.PIPE).stdout.read().decode("utf-8")
-        lists = devices.split("\n")
-        devicesNames = []
-        for item in lists:
-            if(item.strip() == ""):
-                continue
-            elif (item.startswith("List of")):
-                continue
-            else:
-                devicesNames.append(item.split("\t")[0])
-        return devicesNames
-
-    def selectDevices(self, devicesIds):
-        print("Please Select Devices:")
-        i = 0
-        for deviceId in devicesIds:
-            print("\033[1;34m {0}:{1}\033[0m".format(i, deviceId))
-            i += 1
-        print("\033[1;34m e: exit\033[0m")
-        try:
-            inputIndex = input(
-                " Enter your device index [0 ~ {0}]:".format(i-1))
-            value = int(inputIndex)
-            if value >= i:
-                raise Exception("index is to big.")
-            return value
-        except (KeyboardInterrupt, SystemExit):
-            return -1
-        except Exception as e:
-            if "e" == inputIndex or "E" == inputIndex:
-                return -1
-            else:
-                print(
-                    "\033[1;31mYour select index is error, please try again.\033[0m")
-                return self.selectDevices(devicesIds)
+            print("不是android5或android7")
 
     def screenshots(self, raw=False):
         pipe = subprocess.Popen("{0}/adb/adb.exe -s {1} shell screencap -p".format(self.path, self.device),
@@ -119,9 +77,9 @@ class adbKit():
 
 
 class tool():
-    def __init__(self, debug=False) -> None:
+    def __init__(self, device, debug=False) -> None:
         self.debug = debug
-        self.adbkit = adbKit()
+        self.adbkit = adbKit(device)
         self.adbkit.capmuti = self.get_width_muti()
         self.screenshot = None
 
@@ -165,53 +123,3 @@ class tool():
 
     def swipe(self, x1, y1, x2, y2, delay):
         self.adbkit.swipe(x1, y1, x2, y2, delay)
-
-    # debug = False
-    # adbkit = adb.adbKit()
-
-    # def get_width_muti():
-    #     sample = adbkit.screenshots(raw=True)
-    #     adbkit.capmuti = sample.shape[0] / 720
-
-
-# def standby(template, acc=0.85, special=False):
-#     adbkit.debug = debug
-#     target_img = adbkit.screenshots()
-#     if special == True:
-#         cv2.rectangle(target_img, (0, 0), (1280, 420),
-#                       color=(0, 0, 0), thickness=-1)
-#     find_img = cv2.imread(str(template))
-#     find_height, find_width = find_img.shape[:2:]
-#     # 模板匹配
-#     result = cv2.matchTemplate(target_img, find_img, cv2.TM_CCOEFF_NORMED)
-#     reslist = cv2.minMaxLoc(result)
-#     if debug:
-#         cv2.rectangle(target_img, reslist[3], (reslist[3][0]+find_width,
-#                                                reslist[3][1]+find_height), color=(0, 255, 0), thickness=2)
-#         # cv2.imwrite("screencap.png", target_img)
-#         cv2.imshow("screenshots", target_img)
-#         cv2.waitKey(0)
-#     if reslist[1] > acc:
-#         if debug:
-#             print("[Detect]acc rate:", round(reslist[1], 2))
-#         pos = [reslist[3][0], reslist[3][1]]
-#         pos = [x*adbkit.capmuti for x in pos]
-#         return pos, find_height*adbkit.capmuti, find_width*adbkit.capmuti
-#     else:
-#         if debug:
-#             print("[Detect]acc rate:", round(reslist[1], 2))
-#         if special:
-#             return False, 0, 0
-#         else:
-#             return False
-
-
-# def tap(pos, raw=False):
-#     if raw:
-#         adbkit.click(pos[0], pos[1], raw=True)
-#     else:
-#         adbkit.click(pos[0], pos[1])
-
-
-# def swipe(x1, y1, x2, y2, delay):
-#     adbkit.swipe(x1, y1, x2, y2, delay)

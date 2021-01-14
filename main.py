@@ -2,9 +2,14 @@ from configparser import ConfigParser
 import os
 from core import decoder
 from core.auto import auto
+from core import client
 
 if __name__ == '__main__':
+    path = os.path.dirname(os.path.abspath(__file__))
+    os.system("{0}/adb/adb.exe kill-server".format(path))
+    os.system("{0}/adb/adb.exe start-server".format(path))
     while True:
+        device = client.get_devices(path)
         cfg_name = input("請輸入設定檔名稱(不需輸入.ini):")
         ini_path = "UserData/config/" + cfg_name + ".ini"
         while not os.path.isfile(ini_path):
@@ -31,7 +36,7 @@ if __name__ == '__main__':
             os.system('cls')
             run_times = input("請輸入次數")
         try:
-            round = auto("menu.png", support, int(apple_count), apple, int(
+            round = auto("menu.png", support, int(apple_count), apple, device, int(
                 recover_time) * 60, run_time=int(run_times), ver=ver)
             instr = decoder.decode(codelist)
             round.quick_start(True)
@@ -41,5 +46,8 @@ if __name__ == '__main__':
         except Exception as e:
             input("按下Enter結束執行                       ")
         finally:
-            input("請輸入Enter繼續")
-            os.system("cls")
+            ctrl = input("請輸入Enter繼續,或輸入'e'已離開程式")
+            if ctrl.lower() == "e":
+                break
+            else:
+                os.system("cls")
