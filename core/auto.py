@@ -1,32 +1,50 @@
 import time
 import random
+import os
 from types import coroutine
-from core import util
+from core.tool import tool
 from configparser import ConfigParser
 
 
 class auto():
     def __init__(self, ckp: str, spt: str, apl_count: int, apl_type: str = (0, ""), timer=12000, run_time=1, ver="JP", debug=False):
+        self.path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.checkpoint = ckp
-        self.support = "UserData/support/" + spt
+        self.support = []
+        self.support = self.get_support(spt)
         self.counts = int(apl_count)  # apple counts
         self.apple = apl_type
         self.timer = int(timer)
         self.cfg = ConfigParser()
-        self.cfg.read("core/button.ini")
-        self.debug = debug
+        self.cfg.read("{0}/core/button.ini".format(self.path))
         self.run_time = run_time
         self.total_time = 0
         self.now_time = 0
         self.t_begin = 0
         self.t_end = 0
-        util.debug = self.debug
-        util.get_width_muti()
+        self.adbtool = tool(debug=debug)
         self.ver = ver
+        self.debug = debug
+
+    def get_support(self, spt):
+        if os.path.isfile("{0}/UserData/support/{1}".format(self.path, spt)):
+            support = []
+            support.append("{0}/UserData/support/{1}".format(self.path, spt))
+            return support
+        elif os.path.isdir("{0}/UserData/support/{1}".format(self.path, spt)):
+            support = []
+            for each in os.listdir("{0}/UserData/support/{1}".format(self.path, spt)):
+                support.append(
+                    "{0}/UserData/support/{1}/{2}".format(self.path, spt, each))
+            return support
+        else:
+            print("無法找到助戰圖片")
 
     def get_img_path(self, img_name):
-        img_path = "core/images/{0}/{1}".format(self.ver, img_name)
-        return img_path
+        img = []
+        img_path = "{0}/images/{1}/{2}".format(self.path, self.ver, img_name)
+        img.append(img_path)
+        return img
 
     def quick_start(self, first=False):
         self.select_task(self.checkpoint, first)
@@ -38,23 +56,24 @@ class auto():
     def select_task(self, ckp: str, first=False):
         if first or self.now_time == 0:
             print("[INFO] Waiting Task selected")
-            while not util.standby(self.get_img_path(self.checkpoint)):
+            # self.adbtool.compare(self.get_img_path(self.checkpoint)):
+            while not self.adbtool.compare(self.get_img_path(self.checkpoint)):
                 pass
-            util.tap((1100, 170))
+            self.adbtool.tap((1100, 170))
         time.sleep(0.5)
         self.t_begin = time.time()
-        if util.standby(self.get_img_path("noap.png")):
+        if self.adbtool.compare(self.get_img_path("noap.png")):
             print("[INFO] Out of AP!")
             if self.counts >= 0:
                 self.counts -= 1
                 if self.counts == -1:
-                    util.tap((635, 610))
+                    self.adbtool.tap((635, 610))
                     self.wait_ap(self.timer)
                     self.select_task(self.checkpoint, first=True)
                 else:
                     self.eat_apple()
             elif self.counts == -1:
-                util.tap((635, 610))
+                self.adbtool.tap((635, 610))
                 self.wait_ap(self.timer)
                 self.select_task(self.checkpoint, first=True)
             else:
@@ -67,15 +86,15 @@ class auto():
         print("[INFO]Select apple:", end='')
         if self.apple == 'au':
             print("Au")
-            util.tap((375, 320))
+            self.adbtool.tap((375, 320))
         elif self.apple == 'ag':
             print("Ag")
-            util.tap((375, 470))
+            self.adbtool.tap((375, 470))
         elif self.apple == 'sq':
             print("Sq")
-            util.tap((375, 170))
+            self.adbtool.tap((375, 170))
         time.sleep(0.2)
-        util.tap((830, 560))
+        self.adbtool.tap((830, 560))
         print("[INFO] Remain apple counts:", self.counts)
 
     def wait_ap(self, timer):
@@ -97,27 +116,28 @@ class auto():
                 time.sleep(1)
 
     def update_support(self):
-        if util.standby(self.get_img_path("update.png")):
-            util.tap((835, 125))
+        if self.adbtool.compare(self.get_img_path("update.png")):
+            self.adbtool.tap((835, 125))
             time.sleep(0.2)
-            if util.standby(self.get_img_path("close.png")):
-                util.tap((640, 560))
+            if self.adbtool.compare(self.get_img_path("close.png")):
+                self.adbtool.tap((640, 560))
                 print("[INFO] Wait to refresh friend list")
                 time.sleep(2)
             else:
-                util.tap((840, 560))
+                self.adbtool.tap((840, 560))
                 print("[INFO] friend list refresh")
 
-    def advance_support(self, spt: str = None, tms: int = 3):
+    def advance_support(self, spt):
         flag1 = True
         flag2 = True
         # TODO 檢查確定進選好有畫面後再繼續動作
         while flag1:
-            spt_pos = util.standby(spt)
+            spt_pos = self.adbtool.compare(spt)
             if spt_pos == False:
                 print("[INFO] Friend not found", end='\r')
                 if flag2:
-                    bar_pos = util.standby(self.get_img_path("bar.png"))
+                    bar_pos = self.adbtool.compare(
+                        self.get_img_path("bar.png"))
                     if bar_pos:
                         if self.debug:
                             print("no bar")
@@ -126,21 +146,21 @@ class auto():
                         if self.debug:
                             print("have bar")
                         flag2 = False
-                        end_pos = util.standby(
+                        end_pos = self.adbtool.compare(
                             self.get_img_path("friendEnd.png"))
                         if end_pos:
                             print("[INFO] End of friend list")
                             self.update_support()
                             flag2 = True
                         else:
-                            gap_pos, gap_h, gap_w = util.standby(
+                            gap_pos, gap_h, gap_w = self.adbtool.compare(
                                 self.get_img_path("friend_gap.png"), 0.8, True)
                             if gap_pos:
                                 gap_pos = [x for x in gap_pos]
-                                util.swipe(
+                                self.adbtool.swipe(
                                     gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
                 else:
-                    end_pos = util.standby(
+                    end_pos = self.adbtool.compare(
                         self.get_img_path("friendEnd.png"), acc=0.8)
                     if end_pos != False:
                         print("[INFO] End of friend list")
@@ -149,31 +169,31 @@ class auto():
                     else:
                         if self.debug:
                             print("swipe down")
-                        gap_pos, gap_h, gap_w = util.standby(
+                        gap_pos, gap_h, gap_w = self.adbtool.compare(
                             self.get_img_path("friend_gap.png"), 0.8, True)
                         if gap_pos:
                             gap_pos = [x for x in gap_pos]
-                            util.swipe(
+                            self.adbtool.swipe(
                                 gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
             else:
                 flag1 = False
-                util.tap((int(spt_pos[0][0])+int(spt_pos[2]/2),
-                          int(spt_pos[0][1])+int(spt_pos[1]/2)), raw=True)
+                self.adbtool.tap((int(spt_pos[0][0])+int(spt_pos[2]/2),
+                                  int(spt_pos[0][1])+int(spt_pos[1]/2)), raw=True)
 
     def start_battle(self):
-        while not util.standby(self.get_img_path("start.png")):
+        while not self.adbtool.compare(self.get_img_path("start.png")):
             pass
-        util.tap((1180, 670))
+        self.adbtool.tap((1180, 670))
         print("[INFO] Battle started.  ")
 
     def select_servant_skill(self, skill: int, tar: int = 0):
-        time.sleep(0.2)
-        while not util.standby(self.get_img_path("attack.png")):
+        time.sleep(0.5)
+        while not self.adbtool.compare(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
-            util.tap((920, 45))
+            self.adbtool.tap((920, 45))
         pos = self.cfg['skills']['%s' % skill]
         pos = pos.split(',')
-        util.tap(pos)
+        self.adbtool.tap(pos)
         if tar != 0:
             print("[Skill] Use servent", str(int((skill-1)/3 + 1)),
                   "skill", str((skill-1) % 3 + 1), "to servent", tar)
@@ -183,22 +203,22 @@ class auto():
                   "skill", str((skill-1) % 3 + 1), "      ")
 
     def select_servant(self, servant: int):
-        time.sleep(0.2)
-        while not util.standby(self.get_img_path("select.png")):
+        time.sleep(0.5)
+        while not self.adbtool.compare(self.get_img_path("select.png")):
             print("[SKILL] Waiting for servent select", end='\r')
         pos = self.cfg['servent']['%s' % servant]
         pos = pos.split(',')
-        util.tap(pos)
+        self.adbtool.tap(pos)
 
     def select_cards(self, cards):
         time.sleep(0.5)
-        while not util.standby(self.get_img_path("attack.png")):
+        while not self.adbtool.compare(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
-            util.tap((920, 45))
+            self.adbtool.tap((920, 45))
         # tap ATTACK
         pos = self.cfg['attack']['button']
         pos = pos.split(',')
-        util.tap(pos)
+        self.adbtool.tap(pos)
         time.sleep(1.2)
         while len(cards) < 3:
             x = random.randrange(1, 6)
@@ -209,19 +229,19 @@ class auto():
         for card in cards:
             pos = self.cfg['attack']['%s' % card]
             pos = pos.split(',')
-            util.tap(pos)
+            self.adbtool.tap(pos)
         print("[BATTLE] Selected cards: ", cards)
 
     def select_master_skill(self, skill: int, org: int = 0, tar: int = 0):
         time.sleep(0.3)
-        while not util.standby(self.get_img_path("attack.png")):
+        while not self.adbtool.compare(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
-            util.tap((920, 45))
+            self.adbtool.tap((920, 45))
         self.toggle_master_skill()
         pos = self.cfg['master']['%s' % skill]
         pos = pos.split(',')
         pos = [x for x in pos]
-        util.tap(pos)
+        self.adbtool.tap(pos)
         print("[M_Skill] Use master skill", skill)
         if org != 0 and tar == 0:
             self.select_servant(org)
@@ -230,34 +250,34 @@ class auto():
 
     def toggle_master_skill(self):
         time.sleep(0.2)
-        while not util.standby(self.get_img_path("attack.png")):
+        while not self.adbtool.compare(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
-            util.tap((920, 45))
+            self.adbtool.tap((920, 45))
         pos = self.cfg['master']['button']
         pos = pos.split(',')
-        util.tap(pos)
+        self.adbtool.tap(pos)
         print("[M_Skill] Toggle master skill bar")
 
     def change_servant(self, org: int, tar: int):
         time.sleep(0.2)
-        while not util.standby(self.get_img_path("order_change.png")):
+        while not self.adbtool.compare(self.get_img_path("order_change.png")):
             print("[M_Skill] Waiting for order change")
         pos = self.cfg['servent']['s%s', org]
         pos = pos.split(',')
-        util.tap(pos)
+        self.adbtool.tap(pos)
         time.sleep(0.1)
         pos = self.cfg['servent']['a%s', tar]
         pos = pos.split(',')
-        util.tap(pos)
+        self.adbtool.tap(pos)
         time.sleep(0.1)
-        util.tap((650, 620))  # confirm btn
+        self.adbtool.tap((650, 620))  # confirm btn
 
     def finish_battle(self):
-        while not util.standby(self.get_img_path("next.png")):
+        while not self.adbtool.compare(self.get_img_path("next.png")):
             print("[FINISH] Waiting next button", end='\r')
-            util.tap((920, 45))
+            self.adbtool.tap((920, 45))
         print("[FINISH] Battle finish      ")
-        util.tap((1105, 670))
+        self.adbtool.tap((1105, 670))
         if self.now_time < self.run_time:
             continue_flag = True
         else:
@@ -267,17 +287,17 @@ class auto():
         friend_flag = False
         while flag:
             time.sleep(0.1)
-            pos = util.standby(self.get_img_path("friendrequest.png"))
-            util.tap((920, 45))
+            pos = self.adbtool.compare(self.get_img_path("friendrequest.png"))
+            self.adbtool.tap((920, 45))
             if pos and not friend_flag:
-                util.tap((330, 610))
+                self.adbtool.tap((330, 610))
                 friend_flag = True
                 print("[FINISH] Reject friend request")
             else:
-                pos = util.standby(self.get_img_path("continue.png"))
+                pos = self.adbtool.compare(self.get_img_path("continue.png"))
                 if pos:
                     flag = False
-                elif util.standby(self.get_img_path(self.checkpoint)):
+                elif self.adbtool.compare(self.get_img_path(self.checkpoint)):
                     flag = False
                     ckp = True
         self.t_end = time.time()
@@ -286,18 +306,18 @@ class auto():
             self.now_time, int(self.t_end-self.t_begin), self.total_time))
         if continue_flag:
             if not ckp:
-                pos = util.standby(self.get_img_path("continue.png"))
-                util.tap((int(pos[0][0])+int(pos[2]/2),
-                          int(pos[0][1])+int(pos[1]/2)), raw=True)
+                pos = self.adbtool.compare(self.get_img_path("continue.png"))
+                self.adbtool.tap((int(pos[0][0])+int(pos[2]/2),
+                                  int(pos[0][1])+int(pos[1]/2)), raw=True)
             self.quick_start(ckp)
-        elif util.standby(self.get_img_path("noap.png")):
-            util.tap((635, 610))
+        elif self.adbtool.compare(self.get_img_path("noap.png")):
+            self.adbtool.tap((635, 610))
         elif continue_flag == False:
-            pos = util.standby(self.get_img_path("close.png"))
+            pos = self.adbtool.compare(self.get_img_path("close.png"))
             while not pos:
-                pos = util.standby(self.get_img_path("close.png"))
-                ckp = util.standby(self.get_img_path(self.checkpoint))
+                pos = self.adbtool.compare(self.get_img_path("close.png"))
+                ckp = self.adbtool.compare(self.get_img_path(self.checkpoint))
                 if ckp:
                     break
             if pos and not ckp:
-                util.tap(pos[0], raw=True)
+                self.adbtool.tap(pos[0], raw=True)

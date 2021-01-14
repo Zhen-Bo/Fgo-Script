@@ -1,6 +1,4 @@
 from configparser import ConfigParser
-import errno
-import os
 import os
 from core import decoder
 from core.auto import auto
@@ -41,7 +39,7 @@ if __name__ == '__main__':
                 for i in range(0, len(instr)):
                     exec(instr[i])
         except Exception as e:
-            print("[ERROR] " + e)
+            input("按下Enter結束執行                       ")
         finally:
             input("請輸入Enter繼續")
             os.system("cls")
