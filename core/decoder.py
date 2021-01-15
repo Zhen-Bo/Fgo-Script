@@ -29,9 +29,16 @@ def crd_btn(var):
 
 def chk_card(crd):
     crd_list = []
-    for i in range(len(crd)):
-        if crd[i] != 'x':
-            crd_list.append(crd_btn(crd[i]))
+    for x in crd:
+        if x == "x":
+            crd_list.append("\"{}\"".format(x))
+        else:
+            crd_list.append(crd_btn(x))
+    # for i in range(len(crd)):
+    #     if crd[i] != 'x':
+    #         crd_list.append(crd_btn(crd[i]))
+    #     else:
+    #         pass
     return crd_list
 
 
@@ -71,14 +78,15 @@ def decode(code):
         combat_order += chk_skill(code[i])
         if len(chk_card(code[i+3])) == 1:
             seq = chk_card(code[i+3])
-            combat_order.append("round.select_cards([%d])" % seq[0])
+            combat_order.append(
+                "round.select_cards([{}])".format(str(seq[0])))
         elif len(chk_card(code[i+3])) == 2:
             seq = chk_card(code[i+3])
             combat_order.append(
-                "round.select_cards([%d, %d])" % (seq[0], seq[1]))
+                "round.select_cards([{}, {}])".format(str(seq[0]), str(seq[1])))
         elif len(chk_card(code[i+3])) == 3:
             seq = chk_card(code[i+3])
             combat_order.append(
-                "round.select_cards([%d, %d, %d])" % (seq[0], seq[1], seq[2]))
+                "round.select_cards([{}, {}, {}])".format(str(seq[0]), str(seq[1]), str(seq[2])))
     combat_order.append("round.finish_battle()")
     return combat_order

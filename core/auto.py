@@ -220,11 +220,22 @@ class auto():
         pos = pos.split(',')
         self.adbtool.tap(pos)
         time.sleep(1.2)
-        while len(cards) < 3:
-            x = random.randrange(1, 6)
-            if x in cards:
-                continue
-            cards.append(x)
+        i = 0
+        while "x" in cards:
+            if cards[i] == "x":
+                x = random.randrange(1, 6)
+                if x in cards:
+                    continue
+                else:
+                    cards[i] = x
+                    i += 1
+            else:
+                i += 1
+        # while len(cards) < 3:
+        #     x = random.randrange(1, 6)
+        #     if x in cards:
+        #         continue
+        #     cards.append(x)
         # tap CARDS
         for card in cards:
             pos = self.cfg['attack']['%s' % card]
