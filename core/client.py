@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 
 def read_devices(path):
@@ -17,27 +18,29 @@ def read_devices(path):
 
 
 def select_devices(devicesIds):
+    os.system('cls')
     print("請選擇你要控制的設備:")
-    i = 0
+    i = 1
     for deviceId in devicesIds:
         print("\033[1;34m {0}:{1}\033[0m".format(i, deviceId))
         i += 1
-    print("\033[1;34m e: 離開\033[0m")
+    print("\033[1;31m e: 離開\033[0m")
     try:
         inputIndex = input(
-            " Enter your device index [0 ~ {0}]:".format(i-1))
+            "請輸入編號 [1 ~ {0}]:".format(i-1))
         value = int(inputIndex)
-        if value >= i:
-            raise Exception("index is to big.")
-        return value
+        if value < 1 or value >= i:
+            raise Exception("編號過大")
+        return value - 1
     except (KeyboardInterrupt, SystemExit):
-        return -1
+        raise Exception("KeyboardInterrupt")
     except Exception as e:
         if "e" == inputIndex or "E" == inputIndex:
             return -1
         else:
             print(
-                "\033[1;31mYour select index is error, please try again.\033[0m")
+                "\033[1;31m編號輸入錯誤,請在試一次\033[0m")
+            input("請輸入enter繼續")
             return select_devices(devicesIds)
 
 

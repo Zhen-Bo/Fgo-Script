@@ -187,10 +187,10 @@ class auto():
         print("[INFO] Battle started.  ")
 
     def select_servant_skill(self, skill: int, tar: int = 0):
-        time.sleep(0.5)
         while not self.adbtool.compare(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
             self.adbtool.tap((920, 45))
+        time.sleep(0.5)
         pos = self.cfg['skills']['%s' % skill]
         pos = pos.split(',')
         self.adbtool.tap(pos)
@@ -201,6 +201,7 @@ class auto():
         else:
             print("[Skill] Use servent", str(int((skill-1)/3 + 1)),
                   "skill", str((skill-1) % 3 + 1), "      ")
+        time.sleep(0.5)
 
     def select_servant(self, servant: int):
         time.sleep(0.5)
@@ -231,12 +232,6 @@ class auto():
                     i += 1
             else:
                 i += 1
-        # while len(cards) < 3:
-        #     x = random.randrange(1, 6)
-        #     if x in cards:
-        #         continue
-        #     cards.append(x)
-        # tap CARDS
         for card in cards:
             pos = self.cfg['attack']['%s' % card]
             pos = pos.split(',')
@@ -284,6 +279,7 @@ class auto():
         self.adbtool.tap((650, 620))  # confirm btn
 
     def finish_battle(self):
+        # TODO 最佳化辨識流程
         while not self.adbtool.compare(self.get_img_path("next.png")):
             print("[FINISH] Waiting next button", end='\r')
             self.adbtool.tap((920, 45))
