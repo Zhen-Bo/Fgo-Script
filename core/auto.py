@@ -159,22 +159,31 @@ class auto():
                                 gap_pos = [x for x in gap_pos]
                                 self.adbtool.swipe(
                                     gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
+                                time.sleep(0.5)
                 else:
-                    end_pos = self.adbtool.compare(
-                        self.get_img_path("friendEnd.png"), acc=0.8)
-                    if end_pos != False:
-                        print("[INFO] End of friend list")
-                        self.update_support()
-                        flag2 = True
-                    else:
+                    bar_pos = self.adbtool.compare(
+                        self.get_img_path("bar.png"))
+                    if bar_pos:
                         if self.debug:
-                            print("swipe down")
-                        gap_pos, gap_h, gap_w = self.adbtool.compare(
-                            self.get_img_path("friend_gap.png"), 0.8, True)
-                        if gap_pos:
-                            gap_pos = [x for x in gap_pos]
-                            self.adbtool.swipe(
-                                gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
+                            print("no bar")
+                        self.update_support()
+                    else:
+                        end_pos = self.adbtool.compare(
+                            self.get_img_path("friendEnd.png"), acc=0.8)
+                        if end_pos != False:
+                            print("[INFO] End of friend list")
+                            self.update_support()
+                            flag2 = True
+                        else:
+                            if self.debug:
+                                print("swipe down")
+                            gap_pos, gap_h, gap_w = self.adbtool.compare(
+                                self.get_img_path("friend_gap.png"), 0.8, True)
+                            if gap_pos:
+                                gap_pos = [x for x in gap_pos]
+                                self.adbtool.swipe(
+                                    gap_pos[0]+(gap_w/2), gap_pos[1]+(gap_h/2), gap_pos[0]+(gap_w/2), 210, 1.5)
+                                time.sleep(0.5)
             else:
                 flag1 = False
                 self.adbtool.tap((int(spt_pos[0][0])+int(spt_pos[2]/2),
@@ -190,23 +199,26 @@ class auto():
         while not self.adbtool.compare(self.get_img_path("attack.png")):
             print("[BATTLE] Waiting for Attack button", end='\r')
             self.adbtool.tap((920, 45))
-        time.sleep(0.5)
         pos = self.cfg['skills']['%s' % skill]
         pos = pos.split(',')
         self.adbtool.tap(pos)
         if tar != 0:
             print("[Skill] Use servent", str(int((skill-1)/3 + 1)),
                   "skill", str((skill-1) % 3 + 1), "to servent", tar)
-            self.select_servant(tar)
+            self.select_servant(tar, pos)
         else:
             print("[Skill] Use servent", str(int((skill-1)/3 + 1)),
                   "skill", str((skill-1) % 3 + 1), "      ")
-        time.sleep(0.5)
+        while not self.adbtool.compare(self.get_img_path("attack.png")):
+            print("[BATTLE] Waiting for Attack button", end='\r')
+            self.adbtool.tap((920, 45))
 
-    def select_servant(self, servant: int):
+    def select_servant(self, servant: int, skill_pos=False):
         time.sleep(0.5)
         while not self.adbtool.compare(self.get_img_path("select.png")):
             print("[SKILL] Waiting for servent select", end='\r')
+            if skill_pos:
+                self.adbtool.tap(skill_pos)
         pos = self.cfg['servent']['%s' % servant]
         pos = pos.split(',')
         self.adbtool.tap(pos)

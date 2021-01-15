@@ -47,18 +47,6 @@ if __name__ == '__main__':
     path = os.path.dirname(os.path.abspath(__file__))
     os.system("{0}/adb/adb.exe kill-server".format(path))
     os.system("{0}/adb/adb.exe start-server".format(path))
-    option_devices = input("是否要手動加入設備號,\"1\"為需要,不需要則可以輸入enter跳過: ")
-    while option_devices == "1":
-        port = input("請輸入設備名稱或連接的127.0.0.1的port: ")
-        if port.isdigit():
-            os.system(
-                "{0}/adb/adb.exe connect 127.0.0.1:{1}".format(path, port))
-        else:
-            os.system(
-                "{0}/adb/adb.exe connect {1}".format(path, port))
-        ctrl = input("是否繼續添加,是請輸\"1\",不需要可以輸入enter跳過: ")
-        if ctrl != "1":
-            break
     while True:
         os.system('cls')
         try:
